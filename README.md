@@ -1,5 +1,8 @@
 # py-class-diagrams
 Python class diagram generator for class visualization of objects.
+This library uses the awesome [mermaid.live](https://github.com/mermaid-js/mermaid-live-editor) tool for visualizing various diagrams.
+We provide a translation from python object to a given Mermaid diagram.
+See [Usage](#Usage) for a description on how to use this library.
 
 ## Installation
 TODO
