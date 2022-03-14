@@ -1,6 +1,6 @@
-import networkx as nx
-from typing import Optional
+from typing        import Optional
 from diagrams.base import Class
+import networkx as nx
 
 class Analyzer(object):
 
