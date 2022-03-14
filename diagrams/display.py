@@ -1,9 +1,9 @@
 from diagrams.analyzer         import Analyzer
 from diagrams.converter        import Converter
 from diagrams.visualize.server import Server
-from typing             import Any
+from typing                    import Any
 
-def class_diagram(obj: Any):
+def class_diagram(obj: Any) -> None:
     """Display object as class diagram."""
     # Setup objects
     analyzer  = Analyzer()
