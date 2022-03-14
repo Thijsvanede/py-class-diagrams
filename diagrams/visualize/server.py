@@ -1,30 +1,44 @@
 # Import flask
-from flask import Flask, render_template
+from flask  import Flask, render_template
+from typing import Optional
 
-# Create App
-app = Flask(__name__)
+class Server(object):
 
-@app.route('/')
-def index():
-    return render_template(
-        'mermaid.html',
-        classname = 'test',
-        diagram   = diagram,
-    )
+    def __init__(self):
+        """"""
+        # Create Flask app
+        self.app       = Flask(__name__)
+        self.classname = ""
+        self.diagram   = ""
 
-if __name__ == "__main__":
-    # Example with OneClassSVM
-    from sklearn.svm import OneClassSVM
+        # Add route
+        self.app.add_url_rule('/', view_func=self.index)
 
-    # Create object
-    obj = OneClassSVM()
+    def index(self):
+        return render_template(
+            'mermaid.html',
+            classname = self.classname,
+            diagram   = self.diagram,
+        )
 
-    from diagrams.analyzer            import Analyzer
-    from diagrams.visualize.converter import Converter
-    analyzer  = Analyzer()
-    converter = Converter()
-    diagram = converter.mermaid(
-        analyzer.analyze(obj)
-    )
+    def display(
+            self,
+            diagram: str,
+            classname: Optional[str] = None
+        ):
+        """Display a specific diagram.
 
-    app.run()
+            Parameters
+            ----------
+            diagram : string
+                Mermaid diagram to display.
+
+            classname : string, optional
+                Classname to use as title.
+            """
+        # Set values
+        self.classname = classname or self.classname
+        self.diagram   = diagram
+
+        # Serve app
+        self.app.run()
