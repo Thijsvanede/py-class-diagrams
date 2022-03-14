@@ -214,29 +214,3 @@ class Class(object):
 
         # Return result
         return result
-
-
-if __name__ == "__main__":
-    from spacy_embeddings.embedders.word2vec import Word2vecCBOW
-    import spacy
-    nlp = spacy.load('en_core_web_sm')
-    obj = Word2vecCBOW(nlp, 1, 5)
-
-    tmp = Class(obj)
-
-    print(f"{tmp.module}.{tmp.name}")
-
-    print("\nAttributes:")
-    for attribute in tmp.attributes:
-        print(f"  - {attribute}")
-
-    print("\nConstructor:")
-    print(f"  - {tmp.constructor}")
-
-    print("\nMethods:")
-    for method in tmp.methods:
-        print(f"  - {method}")
-
-    print("\nMethods (static):")
-    for method in tmp.methods_static:
-        print(f"  - {method}")
