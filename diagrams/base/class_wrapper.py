@@ -1,6 +1,6 @@
 from diagrams.base.attribute import Attribute
 from diagrams.base.method    import Method
-from typing                  import Any, Dict
+from typing                  import Any, Dict, Iterable
 import inspect
 
 class Class(object):
@@ -27,8 +27,15 @@ class Class(object):
     #                          Initialise methods                          #
     ########################################################################
 
-    def get_attributes(self) -> Dict[str, Attribute]:
+    def get_attributes(
+            self,
+            ignore_attributes: Iterable[str] = {'__module__', '__doc__'},
+        ) -> Dict[str, Attribute]:
         """Get attributes from a given object.
+
+            Parameters
+            ----------
+            ignore_attributes : Iterable
 
             Returns
             -------
@@ -40,7 +47,8 @@ class Class(object):
             (attribute, value) for attribute, value in self.cls.__dict__.items()
             if not inspect.isfunction(value) and
             type(value).__name__ != 'classmethod' and
-            type(value).__name__ != 'staticmethod'
+            type(value).__name__ != 'staticmethod' and
+            attribute not in ignore_attributes
         ]
 
         # Return result
@@ -83,6 +91,14 @@ class Class(object):
             return None
         else:
             return self.cls.__module__
+
+    @property
+    def fullname(self):
+        """Returns the full name of Class as <module.name>."""
+        if self.module:
+            return f"{self.module}.{self.name}"
+        else:
+            return self.name
 
     @property
     def attributes(self):
@@ -137,11 +153,74 @@ class Class(object):
         """Returns class documentation."""
         return self.cls.__doc__
 
+    @property
+    def superclasses(self):
+        """Returns superclasses of class"""
+        return self.cls.__bases__
+
+    ########################################################################
+    #                           Equality methods                           #
+    ########################################################################
+
+    def __eq__(self, other: Any) -> bool:
+        """Return equality between Class and object."""
+        return (
+            isinstance(other, Class) and
+            self.object == other.object and
+            self.cls    == other.cls
+        )
+
+    def __hash__(self):
+        """Override hash method of Class as hash method of object xor cls."""
+        return hash(self.object) ^ hash(self.cls)
+
+    ########################################################################
+    #                             I/O Methods                              #
+    ########################################################################
+
+    def __str__(self) -> str:
+        """Return a string representation of class."""
+        return repr(self)
+
+
+    def __repr__(self) -> str:
+        """Return a representation string of Class."""
+        return f"<diagrams.Class[{self.fullname}] object at {hex(id(self))}>"
+
+
+    def mermaid(self) -> str:
+        """Converts a Class object to Mermaid string representation."""
+        # Initialise result
+        result = f'class {self.name}{{\n'
+
+        # Add private attributes
+        for attribute in self.attributes_dunder:
+            result += f'  - {attribute.type} {attribute.attribute}\n'
+
+        # Add public attributes
+        for attribute in self.attributes:
+            result += f'  + {attribute.type} {attribute.attribute}\n'
+
+        # Add constructor
+        if self.constructor:
+            result += f'  + {self.constructor}\n'
+
+        # Add public methods
+        for method in self.methods:
+            result += f'  + {method}\n'
+
+        # Add closing of class
+        result += '}'
+
+        # Return result
+        return result
+
 
 if __name__ == "__main__":
     from spacy_embeddings.embedders.word2vec import Word2vecCBOW
-
-    obj = Word2vecCBOW([], 5)
+    import spacy
+    nlp = spacy.load('en_core_web_sm')
+    obj = Word2vecCBOW(nlp, 1, 5)
 
     tmp = Class(obj)
 
